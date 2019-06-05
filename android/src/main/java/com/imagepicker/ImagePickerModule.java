@@ -82,6 +82,8 @@ public class ImagePickerModule extends ReactContextBaseJavaModule
   @Deprecated
   private int videoDurationLimit = 0;
 
+  private String albumName = null;
+
   private ResponseHelper responseHelper = new ResponseHelper();
   private PermissionListener listener = new PermissionListener()
   {
@@ -337,6 +339,12 @@ public class ImagePickerModule extends ReactContextBaseJavaModule
       requestCode = REQUEST_LAUNCH_IMAGE_LIBRARY;
       libraryIntent = new Intent(Intent.ACTION_PICK,
       MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+      if(!TextUtils.isEmpty(albumName)){
+        Uri uri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath()
+                +File.separator+ albumName +File.separator);
+        libraryIntent.setDataAndType(uri, "image/*");
+      }
     }
 
     if (libraryIntent.resolveActivity(reactContext.getPackageManager()) == null)
@@ -726,6 +734,9 @@ public class ImagePickerModule extends ReactContextBaseJavaModule
     videoDurationLimit = 0;
     if (options.hasKey("durationLimit")) {
       videoDurationLimit = options.getInt("durationLimit");
+    }
+    if(options.hasKey("albumName")){
+      albumName = options.getString("albumName");
     }
   }
 }
